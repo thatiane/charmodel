@@ -1,90 +1,41 @@
-# Pingr
+# CharModel
 
 [[TOC]]
 
-::: tip CONTEXTO
-O **Pingr** é um sistema hipotético inspirado no [Twitter][twitter]. Foi criado como projeto para o curso **Arquitetura Ágil de Software**, ministrado durante o [Programa de Verão - IME-USP - 2021][veraoimeusp].
+::: tip What is the CharModel?
+The **CharModel** is a model for characterization of the architecture of service-based systems. The CharModel is composed by four dimensions, inspired on the following microservices guidelines:
+- Small and independent services
+- Loose coupling
+- Lightweight communication mechanisms
+- Deployment independence
+- Decentralized data management
 :::
 
-O Pingr é uma rede social no formato de microblog, caracterizada pelo fato de que os usuários podem postar atualizações limitadas a 140 caracteres. Cada atualização, chamada de ping, pode ser respondida em um novo ping, pode receber uma curtida ou então pode receber pongs -- um compartilhamento por outros usuários.
+![CharModel dimensions][charmodel]
 
-Depois de um sucesso estrondoso nos primeiros dois anos e do constante crescimento da base de usuários, a empresa Pingr recebeu um grande aporte financeiro na virada de 2020 para 2021. Esse aporte possibilitou a mudança de escritório para um novo lugar onde poderão fazer as rodadas de contratação que planejavam. O planejamento é multiplicar a equipe de desenvolvimento -- indo de 15 para 250 membros ao longo dos próximos 12 meses.
+## Key Features
 
-Consulte os requisitos do sistema [aqui][requisitospingr].
+- Focused on the structural attributes size and coupling
+- Based on static metrics, extracted from APIs and relationships
+- Can be adopted in different stages of software life cycle (Design-time, Architecture mapping, Architectural evolution)
+- Allows to analyze different components and perspectives, according to the interest scope
 
-## Proposta de Arquitetura
+## Dimensions
 
-### Panorama
+The CharModel dimensions are:
 
-::: warning IMPORTANTE
-Esta proposta é de autoria dos professores do curso. Não é um gabarito, serve como referência do processo de criação, da adoção de padrões e da condução do raciocínio durante a documentação. **Não é a única arquitetura correta**.
-:::
+  1. [Size][size]
+  2. [Data Source Coupling][data_source]
+  3. [Synchronous Coupling][synchronous]
+  4. [Asynchronous Coupling][asynchronous]
 
-A arquitetura proposta segue o _estilo arquitetural de microsserviços_, por alguns fatores:
-- escalabilidade da organização e das equipes de desenvolvimento
-- valores ágeis guiando o processo de engenharia de software, em particular interdisciplinariedade dos times e facilidade para entrega contínua
-- projeção de aumento da -- já grande -- demanda dos usuários
+## Practical Application Example
 
-Abaixo, uma visão de microsserviços panorâmica. Mais detalhes estarão presentes em outras visões subsequentes.
+Access [here][pingr_characterization] to view the characterization of a system architecture generated from the CharModel adoption.
 
-![visão de microsserviços base][msviewbase]
+[size]: ./dimensions/size.md
+[data_source]: ./dimensions/data_source.md
+[synchronous]: ./dimensions/synchronous.md
+[asynchronous]: ./dimensions/asynchronous.md
 
-As resposnsabilidades e funcionalidades de cada microsserviço são as seguintes:
-
-  - **Autenticação**: realiza a autenticação das requisições HTTP(S) que entram no sistema, atuando como único ponto de entrada para o mundo externo (padrão: API Gateway). A _autorização_ deve ser realizada por cada um dos demais microsserviços;
-
-  - **Usuário**: gerencia a entidade Usuário, permitindo criação, atualização e remoção de conta, além de gerenciar a visibilidade de cada usuário (público ou privado);
-
-  - **Ping**: permite a criação e a remoção de pings, bem como a edição de visibilidade de um ping (público, privado ou restrito aos amigos especiais);
-
-  - **Seguir + Amigos**: gerencia a relação entre usuários, permitindo a solicitação e resolução de solicitação de amizade, além de visualizar e gerenciar a lista de amigos especiais. Também permite um usuário seguir uma _hashtag_;
-
-  - **Curtir + Pongar**: gerencia a interação em pings, permitindo curtir e _pongar_ (compartilhar);
-
-  - **Conteúdo**: gerencia o conteúdo exibido a um usuário em suas mesas, e também permite a criação de mesas secundárias;
-
-  - **Busca**: faz a indexação de todo o conteúdo de pings para gerar as listas de _TagNow_ (_Here_ e _World_), e dispara buscas por _hashtags_;
-
-  - **Bate Papo**: gerencia o conteúdo privativo, ou _Direct Pings (DPs)_, permitindo criação de novas conversas e leitura e envio de novas mensagens;
-
-  - **Notificação**: gerencia a lista de atualizações de um usuário que merecem ser notificadas. Também é responsável por acessar um serviço externo de _push notification_.
-
-::: tip Obs
-todos os serviços fazem uso de bancos de dados para persistência e busca de informações, porém neste documento não serão abordadas questões relacionadas aos modelos de dados (relacional, documentos, chave-valor, etc).
-:::
-
-Nesta proposta de arquitetura, alguns padrões de microsserviço são adotados. São eles:
-
-  - [API Gateway][apigateway_tradeoffs]
-  - [Asynchronous Messaging][asyncmsg_tradeoffs]
-  - [CQRS][cqrs_tradeoffs]
-  - [Database per Service][dbpersvc_tradeoffs]
-  - [Event Sourcing][eventsourcing_tradeoffs]
-
-### Demais visões
-
-Outras visões foram criadas para explicitar a arquitetura. São elas:
-
-  1. [Busca - Visão de Microsserviços][msviewbusca]
-  2. [Seguir - Visão de Microsserviços][msviewseguir]
-  3. [Conteúdo Privativo - Visão de Microsserviços][msviewdps]
-  4. [Conteúdo Público - Visão de Microsserviços][msviewpings]
-  5. [Conteúdo Público - Diagrama de Sequência][dseqpings]
-
-
-[twitter]: https://twitter.com
-[veraoimeusp]: https://www.ime.usp.br/~verao/index.php
-[requisitospingr]: ./extras/requisitos.md
-[msviewbase]: ./msview-base.png
-
-[msviewbusca]: ./views/msview-busca.md
-[msviewseguir]: ./views/msview-seguir.md
-[msviewdps]: ./views/msview-dps.md
-[msviewpings]: ./views/msview-pings.md
-[dseqpings]: ./views/dseqview-pings.md
-
-[cqrs_tradeoffs]: ./extras/cqrs_tradeoffs.md
-[apigateway_tradeoffs]: ./extras/apigateway_tradeoffs.md
-[eventsourcing_tradeoffs]: ./extras/eventsourcing_tradeoffs.md
-[asyncmsg_tradeoffs]: ./extras/asyncmsg_tradeoffs.md
-[dbpersvc_tradeoffs]: ./extras/dbperservice_tradeoffs.md
+[pingr_characterization]: ./pingr/overview.md
